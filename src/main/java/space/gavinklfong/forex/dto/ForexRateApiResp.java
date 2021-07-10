@@ -1,21 +1,21 @@
 package space.gavinklfong.forex.dto;
 
+import lombok.Data;
+
 import java.time.LocalDate;
 import java.util.Map;
-
-import lombok.Data;
 
 @Data
 public class ForexRateApiResp {
 
 	private String id;
-	
+
 	private Map<String, Double> rates;
-	
+
 	private String base;
-	
+
 	private LocalDate date;
-	
+
 	public ForexRateApiResp() {
 		super();
 	}
@@ -27,5 +27,5 @@ public class ForexRateApiResp {
 		this.rates = rates;
 	}
 
-	
+
 }

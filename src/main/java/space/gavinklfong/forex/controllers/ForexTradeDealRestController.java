@@ -1,31 +1,26 @@
 package space.gavinklfong.forex.controllers;
 
-import javax.validation.Valid;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
-import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.*;
 import space.gavinklfong.forex.dto.ForexTradeDealReq;
+import space.gavinklfong.forex.exceptions.InvalidRateBookingException;
 import space.gavinklfong.forex.exceptions.InvalidRequestException;
+import space.gavinklfong.forex.exceptions.UnknownCustomerException;
 import space.gavinklfong.forex.models.ForexTradeDeal;
 import space.gavinklfong.forex.services.ForexTradeService;
 
-@Slf4j
+import javax.validation.Valid;
+import java.util.List;
+
 @RestController
 @RequestMapping("/deals")
 public class ForexTradeDealRestController {
 	
+	private static Logger logger = LoggerFactory.getLogger(ForexTradeDealRestController.class);
+
 	@Autowired
 	private ForexTradeService tradeService;
 	
@@ -34,16 +29,16 @@ public class ForexTradeDealRestController {
 	 * 
 	 * API - GET /deals
 	 * 
-	 * @param customerId. Exception will be thrown if customer id is empty, 
+	 * @param customerId - Exception will be thrown if customer id is empty,
 	 * the exception will be translated to HTTP response with 4xx status
 	 * 
 	 * @return List of forex trade deal records. The framework formats it into JSON format when sending HTTP response
 	 */
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public Flux<ForexTradeDeal> getDeals(@RequestParam Long customerId) {
+	public List<ForexTradeDeal> getDeals(@RequestParam Long customerId) throws InvalidRequestException {
 		
 		if (customerId == null) {
-			return Flux.error(new InvalidRequestException("customerId", "customer Id cannot be blank"));
+			throw new InvalidRequestException("customerId", "customer Id cannot be blank");
 		}
 				
 		return tradeService.retrieveTradeDealByCustomer(customerId);
@@ -63,12 +58,10 @@ public class ForexTradeDealRestController {
 	 * @return Trade deal object. The framework formats it into JSON format when sending HTTP response
 	 */
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<ForexTradeDeal> submitDeal(@Valid @RequestBody ForexTradeDealReq req) {
+	public ForexTradeDeal submitDeal(@Valid @RequestBody ForexTradeDealReq req) throws UnknownCustomerException, InvalidRateBookingException {
 		
 		// submit trade deal
 		return tradeService.postTradeDeal(req);
-
 	}
-	
 
 }

@@ -1,18 +1,20 @@
 package space.gavinklfong.forex.repos;
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-
-import reactor.core.publisher.Mono;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import space.gavinklfong.forex.models.ForexRateBooking;
 
-public interface ForexRateBookingRepo extends ReactiveCrudRepository <ForexRateBooking, Long>{
+import java.util.List;
+
+@Repository
+public interface ForexRateBookingRepo extends CrudRepository <ForexRateBooking, Long>{
 
 	/**
 	 * Retrieve rate booking record by booking ref
-	 * 
+	 *
 	 * @param customerId
 	 * @return
 	 */
-	Mono<ForexRateBooking> findByBookingRef(String bookingRef);
-	
+	List<ForexRateBooking> findByBookingRef(String bookingRef);
+
 }

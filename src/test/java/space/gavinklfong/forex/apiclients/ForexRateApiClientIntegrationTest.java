@@ -1,9 +1,6 @@
 package space.gavinklfong.forex.apiclients;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import lombok.extern.slf4j.Slf4j;
 import space.gavinklfong.forex.dto.ForexRateApiResp;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
@@ -36,7 +33,7 @@ public class ForexRateApiClientIntegrationTest {
 		
 		final String BASE = "GBP";
 		
-		ForexRateApiResp resp = client.fetchLatestRates(BASE).block();
+		ForexRateApiResp resp = client.fetchLatestRates(BASE);
 		
 		assertNotNull(resp);
 		assertNotNull(resp.getDate());
@@ -54,7 +51,7 @@ public class ForexRateApiClientIntegrationTest {
 		final String BASE = "GBP";
 		final String COUNTER = "USD";
 		
-		ForexRateApiResp resp = client.fetchLatestRate(BASE, COUNTER).block();
+		ForexRateApiResp resp = client.fetchLatestRate(BASE, COUNTER);
 		
 		assertNotNull(resp);
 		assertNotNull(resp.getDate());

@@ -1,14 +1,13 @@
 package space.gavinklfong.forex.config;
 
-import java.io.IOException;
+import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import com.opencsv.exceptions.CsvValidationException;
-
 import space.gavinklfong.forex.services.ForexPricingService;
 
+import java.io.IOException;
 
 @Configuration
 public class AppConfig {

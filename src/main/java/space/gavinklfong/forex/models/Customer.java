@@ -1,21 +1,26 @@
 package space.gavinklfong.forex.models;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import lombok.Data;
 
+import javax.persistence.*;
+import java.util.Collection;
+
 @Data
-@Table(value = "customer")
+@Entity
+@Table(name = "customer")
 public class Customer {
 	
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	private String name;
 	
 	private Integer tier;
-		
+	
+//	@OneToMany (cascade = CascadeType.ALL, mappedBy = "customer", orphanRemoval = true)
+//	private Collection<ForexTradeDeal> deals;
+	
 	public Customer() {
 		super();
 	}
@@ -25,16 +30,16 @@ public class Customer {
 	}
 	
 	public Customer(String name, Integer tier) {
+		super();
 		this.name = name;
 		this.tier = tier;
 	}
 
 	public Customer(Long id, String name, Integer tier) {
+		super();
 		this.id = id;
 		this.name = name;
 		this.tier = tier;
 	}
-	
-
 
 }

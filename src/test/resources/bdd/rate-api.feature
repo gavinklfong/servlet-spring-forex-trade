@@ -2,24 +2,28 @@
 Feature: Rate Service
 	Verify Rate Service Functionalities
 	
-	Scenario Outline: Fetch the latest rate for base currency '<baseCurrency>'
+	Scenario: Fetch the latest rate with base currency '<baseCurrency>'
 		Given API Service is started
-		When I request for the latest rate for base currency '<baseCurrency>'
-		Then I should receive a list of currency rates
+		When I request for the latest rate with base currency '<baseCurrency>'
+		Then I should receive list of currency rate
 		Examples:
 		| baseCurrency |
 		| GBP |
 		| USD |
-	
-	Scenario Outline: Make a rate booking
+		| AUD |
+		| EUR |
+		| NZD |
+
+	Scenario: Make a rate booking
 		Given API Service is started
-		When I request for a rate booking with parameters: '<tradeAction>', '<baseCurrency>', '<counterCurrency>', <baseCurrencyAmount>, <customerId>
-		Then I should receive a rate booking with expiry time in the future
+		When I request for a rate booking with parameters: '<baseCurrency>', '<counterCurrency>', '<tradeAction>', <baseCurrencyAmount>, <customerId>
+		Then I should receive a valid rate booking
 		Examples:
-		| tradeAction 	| baseCurrency	| counterCurrency 	| baseCurrencyAmount	| customerId |
-		|  BUY			| GBP 			| USD 				| 1000					| 1 		 |
-		|  BUY			| USD 			| JPY 				| 250					| 1 		 |
-		|  SELL			| CAD 			| CHF 				| 2000					| 1 		 |
-		|  SELL			| GBP 			| USD 				| 3000					| 1 		 |
-		|  SELL			| EUR 			| USD 				| 1500					| 1 		 |
-		|  BUY			| EUR 			| GBP 				| 100000				| 1 		 |
+		| baseCurrency| counterCurrency | tradeAction | baseCurrencyAmount| customerId |
+		| EUR 				| USD 		| BUY		    | 1000							| 1 				 |
+		| USD 				| JPY 		| BUY			| 250							| 1 				 |
+		| GBP 				| USD 		| SELL			| 2000							| 1 				 |
+		| AUD 				| USD 		| SELL			| 3000							| 1 				 |
+		| NZD 				| USD 		| BUY			| 1500							| 1 				 |
+		| EUR 				| JPY 		| SELL			| 100000						| 1 				 |
+		

@@ -1,11 +1,11 @@
 package space.gavinklfong.forex.exceptions;
 
+import org.springframework.validation.ObjectError;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.validation.ObjectError;
-
-public class InvalidRequestException extends Exception {
+public class InvalidRequestException extends RuntimeException {
 
 	protected List<ObjectError> errors;
 	

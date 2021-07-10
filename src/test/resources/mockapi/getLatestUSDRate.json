@@ -54,7 +54,7 @@
         "id": {
           "type": "string",
           "example": "GBP-USD"
-        },        
+        },
         "base": {
           "type": "string",
           "example": "GBP"
@@ -67,8 +67,8 @@
       "example": {
         "rates": {
           "USD": 1.3923701653
-       },
-       	"id": "GBP-USD",
+        },
+        "id": "GBP-USD",
         "base": "GBP",
         "date": "2020-01-20"
       }
