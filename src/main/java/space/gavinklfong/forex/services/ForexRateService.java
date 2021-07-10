@@ -195,7 +195,13 @@ public class ForexRateService {
             return false;
         }
 
-        // Check if amount matches
+        // Check currency pair
+        if (!record.getBaseCurrency().equalsIgnoreCase(rateBooking.getBaseCurrency())
+                || !record.getCounterCurrency().equalsIgnoreCase(rateBooking.getCounterCurrency())) {
+            return false;
+        }
+
+        // Check amount
         if (record.getBaseCurrencyAmount().compareTo(rateBooking.getBaseCurrencyAmount()) != 0) {
             return false;
         }
