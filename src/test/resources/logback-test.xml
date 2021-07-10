@@ -8,9 +8,9 @@
     </appender>
 
 
-	<logger name="space.gavinklfong" level="DEBUG">
-		<appender-ref ref="stdout"/>
-	</logger>
+<!--	<logger name="space.gavinklfong" level="DEBUG">-->
+<!--		<appender-ref ref="stdout"/>-->
+<!--	</logger>-->
 
     <root level="INFO">
         <appender-ref ref="stdout"/>

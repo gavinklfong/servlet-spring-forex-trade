@@ -1,15 +1,5 @@
 package space.gavinklfong.forex.repos;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,9 +8,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
-
 import space.gavinklfong.forex.models.Customer;
 import space.gavinklfong.forex.models.ForexRateBooking;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @DataJpaTest
@@ -46,14 +43,8 @@ public class ForexRateBookingRepoTest {
 		rate.setRate(Double.valueOf(2.25));
 		rate.setExpiryTime(LocalDateTime.now().plusMinutes(10));
 		rate.setBookingRef(uuid.toString());
-		
-		Customer cust = new Customer();
-		cust.setName("tester");
-		cust.setTier(1);
-		
-		rate.setCustomer(cust);
-		
-		
+		rate.setCustomerId(1l);
+
 		rate = rateBookingRepo.save(rate);
 		
 		assertNotNull(rate.getId());

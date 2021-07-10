@@ -10,21 +10,20 @@ Feature: Rate Service
 		| baseCurrency |
 		| GBP |
 		| USD |
-		| HKD |
-		| CAD |
-		| JPY |
-		| DKK |
-	
+		| AUD |
+		| EUR |
+		| NZD |
+
 	Scenario: Make a rate booking
 		Given API Service is started
-		When I request for a rate booking with parameters: '<baseCurrency>', '<counterCurrency>', <baseCurrencyAmount>, <customerId>
+		When I request for a rate booking with parameters: '<baseCurrency>', '<counterCurrency>', '<tradeAction>', <baseCurrencyAmount>, <customerId>
 		Then I should receive a valid rate booking
 		Examples:
-		| baseCurrency| counterCurrency | baseCurrencyAmount| customerId |
-		| GBP 				| USD 						| 1000							| 1 				 |
-		| USD 				| GBP 						| 250								| 1 				 |
-		| CAD 				| USD 						| 2000							| 1 				 |
-		| PHP 				| USD 						| 3000							| 1 				 |
-		| HKD 				| USD 						| 1500							| 1 				 |
-		| GBP 				| HKD 						| 100000						| 1 				 |
+		| baseCurrency| counterCurrency | tradeAction | baseCurrencyAmount| customerId |
+		| EUR 				| USD 		| BUY		    | 1000							| 1 				 |
+		| USD 				| JPY 		| BUY			| 250							| 1 				 |
+		| GBP 				| USD 		| SELL			| 2000							| 1 				 |
+		| AUD 				| USD 		| SELL			| 3000							| 1 				 |
+		| NZD 				| USD 		| BUY			| 1500							| 1 				 |
+		| EUR 				| JPY 		| SELL			| 100000						| 1 				 |
 		

@@ -1,17 +1,19 @@
 package space.gavinklfong.forex.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import space.gavinklfong.forex.dto.TradeAction;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "forex_rate_booking")
 public class ForexRateBooking {
@@ -21,13 +23,10 @@ public class ForexRateBooking {
 	private Long id;
 	
 	private LocalDateTime timestamp;
-	
 	private String baseCurrency;
-	
 	private String counterCurrency;
-	
 	private Double rate;
-	
+	private TradeAction tradeAction;
 	private BigDecimal baseCurrencyAmount;
 	
 	@Column(unique = true)
@@ -35,16 +34,14 @@ public class ForexRateBooking {
 	
 	private LocalDateTime expiryTime;
 
-	@ManyToOne
-	@JoinColumn(name = "customer_id", referencedColumnName = "id")
-	private Customer customer;
+//	@ManyToOne
+//	@JoinColumn(name = "customer_id", referencedColumnName = "id")
+//	private Customer customer;
 
-	public ForexRateBooking() {
-		super();
-	}
-	
+	private Long customerId;
+
 	public ForexRateBooking(Long id, LocalDateTime timestamp, String baseCurrency, String counterCurrency, Double rate,
-			String bookingRef, LocalDateTime expiryTime, Customer customer) {
+							String bookingRef, LocalDateTime expiryTime, Long customerId) {
 		super();
 		this.id = id;
 		this.timestamp = timestamp;
@@ -53,9 +50,9 @@ public class ForexRateBooking {
 		this.rate = rate;
 		this.bookingRef = bookingRef;
 		this.expiryTime = expiryTime;
-		this.customer = customer;
+		this.customerId = customerId;
 	}
-	
+
 	public ForexRateBooking(String baseCurrency, String counterCurrency, Double rate, BigDecimal baseCurrencyAmount, String bookingRef) {
 		super();
 		this.baseCurrency = baseCurrency;
@@ -64,86 +61,13 @@ public class ForexRateBooking {
 		this.baseCurrencyAmount = baseCurrencyAmount;
 		this.bookingRef = bookingRef;
 	}
-		
+
 	public ForexRateBooking(String baseCurrency, String counterCurrency, BigDecimal baseCurrencyAmount, Long customerId) {
 		super();
 		this.baseCurrency = baseCurrency;
 		this.counterCurrency = counterCurrency;
 		this.baseCurrencyAmount = baseCurrencyAmount;
-		this.customer = new Customer(customerId);
-	}
-	
-	public String getBaseCurrency() {
-		return baseCurrency;
+		this.customerId = customerId;
 	}
 
-	public void setBaseCurrency(String baseCurrency) {
-		this.baseCurrency = baseCurrency;
-	}
-
-	public String getCounterCurrency() {
-		return counterCurrency;
-	}
-
-	public void setCounterCurrency(String counterCurrency) {
-		this.counterCurrency = counterCurrency;
-	}
-
-	public Double getRate() {
-		return rate;
-	}
-
-	public void setRate(Double rate) {
-		this.rate = rate;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public LocalDateTime getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	public String getBookingRef() {
-		return bookingRef;
-	}
-
-	public void setBookingRef(String reservationCode) {
-		this.bookingRef = reservationCode;
-	}
-
-	public LocalDateTime getExpiryTime() {
-		return expiryTime;
-	}
-
-	public void setExpiryTime(LocalDateTime expiryTime) {
-		this.expiryTime = expiryTime;
-	}
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
-	public BigDecimal getBaseCurrencyAmount() {
-		return baseCurrencyAmount;
-	}
-
-	public void setBaseCurrencyAmount(BigDecimal baseCurrencyAmount) {
-		this.baseCurrencyAmount = baseCurrencyAmount;
-	}
-
-	
 }

@@ -1,60 +1,39 @@
 package space.gavinklfong.forex.dto;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
+
 import java.time.LocalDateTime;
 
-
+@Data
+@NoArgsConstructor
+@Builder
 public class ForexRate {
-		
+
 	private LocalDateTime timestamp;
-	
 	private String baseCurrency;
-	
 	private String counterCurrency;
-	
-	private Double rate;
-	
-	public ForexRate() {
-		super();
+
+	@With
+	private Double buyRate;
+
+	@With
+	private Double sellRate;
+
+	@JsonGetter
+	public Double getSpread() {
+		return Math.round(Math.abs(buyRate - sellRate) * 10000d) / 10000d;
 	}
-	
-	public ForexRate(LocalDateTime timestamp, String baseCurrency, String counterCurrecy, Double rate) {
+
+	public ForexRate(LocalDateTime timestamp, String baseCurrency, String counterCurrecy, Double buyRate, Double sellRate) {
 		this.timestamp = timestamp;
 		this.baseCurrency = baseCurrency;
 		this.counterCurrency = counterCurrecy;
-		this.rate = rate;
-	}
-		
-	public LocalDateTime getDateTIme() {
-		return timestamp;
+		this.buyRate = buyRate;
+		this.sellRate = sellRate;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	public String getBaseCurrency() {
-		return baseCurrency;
-	}
-
-	public void setBaseCurrency(String baseCurrency) {
-		this.baseCurrency = baseCurrency;
-	}
-
-	public String getCounterCurrency() {
-		return counterCurrency;
-	}
-
-	public void setCounterCurrency(String counterCurrency) {
-		this.counterCurrency = counterCurrency;
-	}
-
-	public Double getRate() {
-		return rate;
-	}
-
-	public void setRate(Double rate) {
-		this.rate = rate;
-	}
-
-	
 }

@@ -1,9 +1,5 @@
-package space.gavinklfong.forex.services;
+package space.gavinklfong.forex.apiclients;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Map;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import reactor.core.publisher.Mono;
 import space.gavinklfong.forex.dto.ForexRateApiResp;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,23 +52,21 @@ public class ForexRateApiClientTest {
 	        .withOperationsAndResponses(Collections.singletonMap("getLatestRates", "200"))  
 	    );
 		
-
 		// Initialize API client and trigger request
 		ForexRateApiClient forexRateApiClient = new ForexRateApiClient(serverUrl);
-		Mono<ForexRateApiResp> response = forexRateApiClient.fetchLatestRates("GBP");
+		ForexRateApiResp response = forexRateApiClient.fetchLatestRates("GBP");
 		
 		// Assert response
-		ForexRateApiResp rawData = response.block();
+		ForexRateApiResp rawData = response;
 		assertEquals(rawData.getBase(), "GBP");
 		
 		Map<String, Double> rates = rawData.getRates();
-		assertTrue(rates.size() > 10);
+		assertEquals(4, rates.size());
 		
+		assertTrue(rates.containsKey("USD"));
+		assertTrue(rates.containsKey("EUR"));
 		assertTrue(rates.containsKey("CAD"));
-		assertTrue(rates.containsKey("PHP"));
-		assertTrue(rates.containsKey("DKK"));
-		assertTrue(rates.containsKey("GBP"));
-		assertEquals(1, rates.get("GBP"));
+		assertTrue(rates.containsKey("JPY"));
 
 	}
 	
@@ -84,10 +82,10 @@ public class ForexRateApiClientTest {
 		
 		// Initialize API client and trigger request
 		ForexRateApiClient forexRateApiClient = new ForexRateApiClient(serverUrl);
-		Mono<ForexRateApiResp> response = forexRateApiClient.fetchLatestRates("GBP");
+		ForexRateApiResp response = forexRateApiClient.fetchLatestRate("GBP", "USD");
 		
 		// Assert response
-		ForexRateApiResp rawData = response.block();
+		ForexRateApiResp rawData = response;
 		assertEquals(rawData.getBase(), "GBP");
 		
 		Map<String, Double> rates = rawData.getRates();

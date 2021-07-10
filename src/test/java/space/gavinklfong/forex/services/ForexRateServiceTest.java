@@ -1,23 +1,6 @@
 package space.gavinklfong.forex.services;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyLong;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.anyDouble;
-
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -27,19 +10,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import space.gavinklfong.forex.dto.ForexRateApiResp;
-import space.gavinklfong.forex.dto.ForexRate;
-import space.gavinklfong.forex.dto.ForexRateBookingReq;
+import space.gavinklfong.forex.apiclients.ForexRateApiClient;
+import space.gavinklfong.forex.dto.*;
+import space.gavinklfong.forex.exceptions.InvalidRequestException;
 import space.gavinklfong.forex.exceptions.UnknownCustomerException;
 import space.gavinklfong.forex.models.Customer;
 import space.gavinklfong.forex.models.ForexRateBooking;
 import space.gavinklfong.forex.repos.CustomerRepo;
 import space.gavinklfong.forex.repos.ForexRateBookingRepo;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @SpringJUnitConfig
 @TestPropertySource(properties = {
@@ -62,7 +49,7 @@ public class ForexRateServiceTest {
 	private ForexRateBookingRepo rateBookingRepo;
 	
 	@MockBean
-	private ForexPriceService forexPriceService;
+	private ForexPricingService forexPriceService;
 
 	@Autowired
 	private ForexRateService rateService;
@@ -78,10 +65,8 @@ public class ForexRateServiceTest {
 		
 		ForexRateBooking rateBooking = new ForexRateBooking("GBP", "USD", 0.25, BigDecimal.valueOf(1000), "ABC");
 		
-		Mono<Boolean> result = rateService.validateRateBooking(rateBooking);
-		StepVerifier.create(result)
-		.expectNext(true)
-		.verifyComplete();		
+		Boolean result = rateService.validateRateBooking(rateBooking);
+		assertTrue(result);
 	}
 	
 	@Test
@@ -91,10 +76,8 @@ public class ForexRateServiceTest {
 		
 		ForexRateBooking rateBooking = new ForexRateBooking("GBP", "USD", 0.25, BigDecimal.valueOf(1000), "ABC");
 		
-		Mono<Boolean> result = rateService.validateRateBooking(rateBooking);
-		StepVerifier.create(result)
-		.expectNext(false)
-		.verifyComplete();		
+		Boolean result = rateService.validateRateBooking(rateBooking);
+		assertFalse(result);
 	}
 	
 	@Test
@@ -106,10 +89,8 @@ public class ForexRateServiceTest {
 		
 		ForexRateBooking rateBooking = new ForexRateBooking("GBP", "USD", 0.25, BigDecimal.valueOf(1000), "ABC");
 		
-		Mono<Boolean> result = rateService.validateRateBooking(rateBooking);
-		StepVerifier.create(result)
-		.expectNext(false)
-		.verifyComplete();	
+		Boolean result = rateService.validateRateBooking(rateBooking);
+		assertFalse(result);
 		
 	}
 	
@@ -130,20 +111,37 @@ public class ForexRateServiceTest {
 		ForexRateApiResp forexRateApiResp = new ForexRateApiResp("GBP", LocalDate.now(), rates);
 		
 		when(forexRateApiClient.fetchLatestRates("GBP"))
-		.thenReturn(Mono.just(forexRateApiResp));
-		
+		.thenReturn(forexRateApiResp);
+
 		when(forexPriceService.obtainForexPrice(anyString(), anyString(), anyDouble()))
-		.thenAnswer(invocation -> {
-			Double rate = (Double)invocation.getArgument(2);
-			return rate + ADDITIONAL_PIP;
-		});
-		
-		Flux<ForexRate> resp = rateService.fetchLatestRates("GBP");
-		StepVerifier.create(resp)
-		.expectNextMatches(rate -> rate.getBaseCurrency().contentEquals("GBP") && rate.getCounterCurrency().contentEquals("EUR") && rate.getRate() == EUR_RATE_WITH_PRICE)
-		.expectNextMatches(rate ->  rate.getBaseCurrency().contentEquals("GBP") && rate.getCounterCurrency().contentEquals("USD") && rate.getRate() == USD_RATE_WITH_PRICE)
-		.verifyComplete();	
-		
+				.thenAnswer(invocation -> {
+					String base = (String)invocation.getArgument(0);
+					String counter = (String)invocation.getArgument(1);
+					Double rate = (Double)invocation.getArgument(2);
+					return ForexRate.builder().
+							baseCurrency(base).counterCurrency(counter)
+							.buyRate(rate + 2).sellRate(rate + 4).build();
+				});
+
+		List<ForexPricing> forexPrices = Arrays.asList(
+				ForexPricing.builder().baseCurrency("GBP").counterCurrency("EUR").sellPip(2).buyPip(4).build(),
+				ForexPricing.builder().baseCurrency("GBP").counterCurrency("USD").sellPip(1).buyPip(2).build()
+		);
+		when(forexPriceService.findCounterCurrencies(anyString())).thenReturn(forexPrices);
+
+		List<ForexRate> resp = rateService.fetchLatestRates("GBP");
+		assertEquals(2, resp.size());
+		ForexRate rate = resp.get(0);
+		assertTrue(rate.getBaseCurrency().contentEquals("GBP")
+				&& rate.getCounterCurrency().contentEquals("EUR")
+				&& rate.getBuyRate() > EUR_RATE
+				&& rate.getBuyRate() < rate.getSellRate());
+		rate = resp.get(1);
+		assertTrue(rate.getBaseCurrency().contentEquals("GBP")
+				&& rate.getCounterCurrency().contentEquals("USD")
+				&& rate.getBuyRate() > USD_RATE
+				&& rate.getBuyRate() < rate.getSellRate());
+
 	}
 	
 	@Test
@@ -154,7 +152,7 @@ public class ForexRateServiceTest {
 		LocalDateTime timestamp = rateBooking.getTimestamp();
 		LocalDateTime expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
-		assertEquals(1 + CustomerRateTier.TIER1.rate + ADDITIONAL_PIP, rateBooking.getRate());	
+		assertEquals(3 + CustomerRateTier.TIER1.rate, rateBooking.getRate());
 		
 	}
 	
@@ -166,7 +164,7 @@ public class ForexRateServiceTest {
 		LocalDateTime timestamp = rateBooking.getTimestamp();
 		LocalDateTime expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
-		assertEquals(1 + CustomerRateTier.TIER2.rate + ADDITIONAL_PIP, rateBooking.getRate());	
+		assertEquals(3 + CustomerRateTier.TIER2.rate, rateBooking.getRate());
 	}
 	
 	@Test
@@ -177,7 +175,7 @@ public class ForexRateServiceTest {
 		LocalDateTime timestamp = rateBooking.getTimestamp();
 		LocalDateTime expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
-		assertEquals(1 + CustomerRateTier.TIER3.rate + ADDITIONAL_PIP, rateBooking.getRate());	
+		assertEquals(3 + CustomerRateTier.TIER3.rate, rateBooking.getRate());
 		
 	}
 	
@@ -194,19 +192,19 @@ public class ForexRateServiceTest {
 		LocalDateTime expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
 		
-		assertEquals(1 + CustomerRateTier.TIER4.rate + ADDITIONAL_PIP, rateBooking.getRate());	
+		assertEquals(3 + CustomerRateTier.TIER4.rate, rateBooking.getRate());
 	}
-	
-	
-	private ForexRateBooking obtainBookingTest(Integer tier) throws JsonProcessingException, UnknownCustomerException {
-		
+
+
+	private ForexRateBooking obtainBookingTest(Integer tier) throws JsonProcessingException, InvalidRequestException {
+
 		// Forex API client returns 1 when fetchLatestRates() is invoked
-		when(forexRateApiClient.fetchLatestRates(anyString(), anyString()))
-		.thenAnswer(invocation -> {
-			Map<String, Double> rates = new HashMap<>();
-			rates.put((String)invocation.getArgument(1), 1d);
-			return Mono.just(new ForexRateApiResp((String)invocation.getArgument(0), LocalDate.now(), rates));
-		});
+		when(forexRateApiClient.fetchLatestRate(anyString(), anyString()))
+				.thenAnswer(invocation -> {
+					Map<String, Double> rates = new HashMap<>();
+					rates.put((String)invocation.getArgument(1), 1d);
+					return new ForexRateApiResp((String)invocation.getArgument(0), LocalDate.now(), rates);
+				});
 		
 		// Customer Repo return a mock customer record when findById() is invoked
 		when(customerRepo.findById(anyLong()))
@@ -219,17 +217,35 @@ public class ForexRateServiceTest {
 			record.setId((long)Math.random() * 10 + 1);
 			return record;
 		});
-		
+
 		when(forexPriceService.obtainForexPrice(anyString(), anyString(), anyDouble()))
-		.thenAnswer(invocation -> {
-			Double rate = (Double)invocation.getArgument(2);
-			return rate + ADDITIONAL_PIP;
-		});
+				.thenAnswer(invocation -> {
+					String base = (String)invocation.getArgument(0);
+					String counter = (String)invocation.getArgument(1);
+					Double rate = (Double)invocation.getArgument(2);
+					return ForexRate.builder().
+							baseCurrency(base).counterCurrency(counter)
+							.buyRate(rate + 2).sellRate(rate + 4).build();
+				});
+
+		when(forexPriceService.findCounterCurrencies("GBP")).thenReturn(
+				Arrays.asList(
+						ForexPricing.builder()
+						.baseCurrency("GBP")
+						.counterCurrency("USD")
+						.sellPip(1)
+						.buyPip(2)
+						.build()
+				)
+		);
 
 		// Create a request to test obtainBooking()
-		ForexRateBookingReq request = new ForexRateBookingReq("GBP", "USD", BigDecimal.valueOf(1000), 1l);
-		Mono<ForexRateBooking> rateBookingMono = rateService.obtainBooking(request);
+		ForexRateBookingReq request = ForexRateBookingReq.builder()
+				.baseCurrency("GBP").counterCurrency("USD")
+				.baseCurrencyAmount(BigDecimal.valueOf(1000))
+				.customerId(1l).tradeAction(TradeAction.BUY)
+				.build();
 
-		return rateBookingMono.block();
+		return rateService.obtainBooking(request);
 	}
 }

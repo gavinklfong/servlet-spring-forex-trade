@@ -11,18 +11,18 @@
 	<groupId>space.gavinklfong</groupId>
 	<artifactId>forex</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>forex</name>
-	<description>Forex Trade</description>
+	<name>servlet-forex</name>
+	<description>Servlet Forex Trade</description>
 	<properties>
 		<java.version>11</java.version>
 		
 		<!--  properties of sonarcloud -->
-		<sonar.projectKey>gavinklfong_reactive-spring-forex-trade</sonar.projectKey>
+		<sonar.projectKey>gavinklfong_servlet-spring-forex-trade</sonar.projectKey>
 		<sonar.organization>gavinklfong</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>	
 		
 		<!-- containerization -->
-		<jib.image.path>whalebig27/reactive-spring-forex-trade</jib.image.path>
+		<jib.image.path>whalebig27/servlet-spring-forex-trade</jib.image.path>
 			
 	</properties>
 	<dependencies>
@@ -33,6 +33,10 @@
  		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -58,7 +62,7 @@
 		
 		<dependency>
 		    <groupId>org.springdoc</groupId>
-		    <artifactId>springdoc-openapi-webflux-ui</artifactId>
+		    <artifactId>springdoc-openapi-webmvc-core</artifactId>
 		    <version>1.5.5</version>
 		</dependency>
 		
@@ -68,7 +72,13 @@
 		    <version>4.4</version>
 		</dependency>
 
-        <dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>

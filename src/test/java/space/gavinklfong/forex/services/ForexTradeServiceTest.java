@@ -1,8 +1,20 @@
 package space.gavinklfong.forex.services;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import space.gavinklfong.forex.dto.ForexTradeDealReq;
+import space.gavinklfong.forex.dto.TradeAction;
+import space.gavinklfong.forex.exceptions.InvalidRateBookingException;
+import space.gavinklfong.forex.exceptions.UnknownCustomerException;
+import space.gavinklfong.forex.models.Customer;
+import space.gavinklfong.forex.models.ForexRateBooking;
+import space.gavinklfong.forex.models.ForexTradeDeal;
+import space.gavinklfong.forex.repos.CustomerRepo;
+import space.gavinklfong.forex.repos.ForexTradeDealRepo;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,24 +23,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import space.gavinklfong.forex.models.ForexTradeDeal;
-import space.gavinklfong.forex.dto.ForexTradeDealReq;
-import space.gavinklfong.forex.exceptions.InvalidRateBookingException;
-import space.gavinklfong.forex.exceptions.UnknownCustomerException;
-import space.gavinklfong.forex.models.Customer;
-import space.gavinklfong.forex.models.ForexRateBooking;
-import space.gavinklfong.forex.repos.CustomerRepo;
-import space.gavinklfong.forex.repos.ForexTradeDealRepo;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {ForexTradeService.class})
@@ -59,15 +57,20 @@ public class ForexTradeServiceTest {
 		when(customerRepo.findById(anyLong()))
 		.thenReturn(Optional.of(new Customer(1l, "Tester 1", 1)));
 		
-		when(rateService.validateRateBooking(any(ForexRateBooking.class))).thenReturn(Mono.just(true));
-				
-		ForexTradeDealReq req = new ForexTradeDealReq("GBP", "USD", 0.25, BigDecimal.valueOf(10000),
-				 1l,  "ABC");
+		when(rateService.validateRateBooking(any(ForexRateBooking.class))).thenReturn(true);
+
+		ForexTradeDealReq req = ForexTradeDealReq.builder()
+				.tradeAction(TradeAction.BUY)
+				.baseCurrency("GBP")
+				.counterCurrency("USD")
+				.rate(0.25)
+				.baseCurrencyAmount(BigDecimal.valueOf(10000))
+				.customerId(1l)
+				.rateBookingRef("ABC")
+				.build();
 		
-		Mono<ForexTradeDeal> deal = tradeService.postTradeDeal(req);
-		StepVerifier.create(deal)
-		.expectNextMatches(record -> record.getId() == 99l)
-		.verifyComplete();		
+		ForexTradeDeal deal = tradeService.postTradeDeal(req);
+		assertEquals(99l, deal.getId());
 	}
 	
 	@Test
@@ -78,19 +81,26 @@ public class ForexTradeServiceTest {
 			deal.setId(99l);
 			return deal;
 		});
-		
+
 		when(customerRepo.findById(anyLong()))
 		.thenReturn(Optional.of(new Customer(1l, "Tester 1", 1)));
-		
-		when(rateService.validateRateBooking(any(ForexRateBooking.class))).thenReturn(Mono.just(false));
-				
-		ForexTradeDealReq req = new ForexTradeDealReq("GBP", "USD", 0.25, BigDecimal.valueOf(10000),
-				 1l,  "ABC");
-		
-		Mono<ForexTradeDeal> deal = tradeService.postTradeDeal(req);
-		StepVerifier.create(deal)
-		.expectError(InvalidRateBookingException.class)
-		.verify();
+
+		when(rateService.validateRateBooking(any(ForexRateBooking.class))).thenReturn(false);
+
+		ForexTradeDealReq req = ForexTradeDealReq.builder()
+				.tradeAction(TradeAction.BUY)
+				.baseCurrency("GBP")
+				.counterCurrency("USD")
+				.rate(0.25)
+				.baseCurrencyAmount(BigDecimal.valueOf(10000))
+				.customerId(1l)
+				.rateBookingRef("ABC")
+				.build();
+
+		assertThrows(InvalidRateBookingException.class, () -> {
+			ForexTradeDeal deal = tradeService.postTradeDeal(req);
+		});
+
 	}
 	
 	@Test
@@ -105,27 +115,50 @@ public class ForexTradeServiceTest {
 		when(customerRepo.findById(anyLong()))
 		.thenReturn(Optional.empty());
 		
-		when(rateService.validateRateBooking(any(ForexRateBooking.class))).thenReturn(Mono.just(true));
-				
-		ForexTradeDealReq req = new ForexTradeDealReq("GBP", "USD", 0.25, BigDecimal.valueOf(10000),
-				 1l,  "ABC");
-		
-		
-		Mono<ForexTradeDeal> deal = tradeService.postTradeDeal(req);
-		StepVerifier.create(deal)
-		.expectError(UnknownCustomerException.class)
-		.verify();
+		when(rateService.validateRateBooking(any(ForexRateBooking.class))).thenReturn(true);
+
+		ForexTradeDealReq req = ForexTradeDealReq.builder()
+				.tradeAction(TradeAction.BUY)
+				.baseCurrency("GBP")
+				.counterCurrency("USD")
+				.rate(0.25)
+				.baseCurrencyAmount(BigDecimal.valueOf(10000))
+				.customerId(1l)
+				.rateBookingRef("ABC")
+				.build();
+
+		assertThrows(UnknownCustomerException.class, () -> {
+			ForexTradeDeal deal = tradeService.postTradeDeal(req);
+		});
+
 	}
 	
 	@Test
 	public void retrieveTradeDealByCustomerTest() {
-		
-		ForexTradeDeal deal1 = new ForexTradeDeal(UUID.randomUUID().toString(), LocalDateTime.now(), "GBP", "USD",  Math.random(),
-				BigDecimal.valueOf(1000), new Customer(1l, "Tester 1", 1));
-		ForexTradeDeal deal2 = new ForexTradeDeal(UUID.randomUUID().toString(), LocalDateTime.now(), "GBP", "USD",  Math.random(),
-				BigDecimal.valueOf(1000), new Customer(1l, "Tester 1", 1));
-		ForexTradeDeal deal3 = new ForexTradeDeal(UUID.randomUUID().toString(), LocalDateTime.now(), "GBP", "USD",  Math.random(),
-				BigDecimal.valueOf(1000), new Customer(1l, "Tester 1", 1));
+
+		ForexTradeDeal deal1 = ForexTradeDeal.builder()
+				.id(1l).dealRef(UUID.randomUUID().toString())
+				.timestamp(LocalDateTime.now())
+				.baseCurrency("GBP").counterCurrency("USD")
+				.rate(1.25d).baseCurrencyAmount(new BigDecimal(1000)).customerId(1l)
+				.tradeAction(TradeAction.BUY)
+				.build();
+
+		ForexTradeDeal deal2 = ForexTradeDeal.builder()
+				.id(1l).dealRef(UUID.randomUUID().toString())
+				.timestamp(LocalDateTime.now())
+				.baseCurrency("GBP").counterCurrency("USD")
+				.rate(1.25d).baseCurrencyAmount(new BigDecimal(1000)).customerId(1l)
+				.tradeAction(TradeAction.SELL)
+				.build();
+
+		ForexTradeDeal deal3 = ForexTradeDeal.builder()
+				.id(1l).dealRef(UUID.randomUUID().toString())
+				.timestamp(LocalDateTime.now())
+				.baseCurrency("GBP").counterCurrency("USD")
+				.rate(Math.random()).baseCurrencyAmount(new BigDecimal(1000)).customerId(1l)
+				.tradeAction(TradeAction.SELL)
+				.build();
 				
 		List<ForexTradeDeal> deals = new ArrayList<>();
 		deals.add(deal1);
@@ -134,15 +167,12 @@ public class ForexTradeServiceTest {
 		
 		when(tradeDealRepo.findByCustomerId(anyLong())).thenReturn(deals);
 		
-		Flux<ForexTradeDeal> result = tradeService.retrieveTradeDealByCustomer(1l);
-		
-		StepVerifier
-		.create(result)
-		.expectNext(deal1)
-		.expectNext(deal2)
-		.expectNext(deal3)
-		.expectComplete()
-		.verify();
+		List<ForexTradeDeal> result = tradeService.retrieveTradeDealByCustomer(1l);
+		assertEquals(3, result.size());
+		assertTrue(deal1.equals(result.get(0)));
+		assertTrue(deal2.equals(result.get(1)));
+		assertTrue(deal3.equals(result.get(2)));
+
 	}
 	
 	@Test
@@ -150,13 +180,9 @@ public class ForexTradeServiceTest {
 		
 		when(tradeDealRepo.findByCustomerId(anyLong())).thenReturn(null);
 		
-		Flux<ForexTradeDeal> result = tradeService.retrieveTradeDealByCustomer(1l);
-		
-		StepVerifier
-		.create(result)
-		.expectComplete()
-		.verify();
+		List<ForexTradeDeal> result = tradeService.retrieveTradeDealByCustomer(1l);
 
+		assertNull(result);
 	}
 	
 }

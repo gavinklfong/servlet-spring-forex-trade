@@ -1,11 +1,19 @@
 package space.gavinklfong.forex.dto;
 
-import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.math.BigDecimal;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ForexRateBookingReq {
 
 	@NotEmpty
@@ -13,55 +21,16 @@ public class ForexRateBookingReq {
 
 	@NotEmpty
 	private String counterCurrency;
-	
+
 	@NotNull
 	@Positive
 	private BigDecimal baseCurrencyAmount;
-	
+
+	@NotNull
+	private TradeAction tradeAction;
+
 	@NotNull
 	private Long customerId;
-	
-	public ForexRateBookingReq() {
-		super();
-	}
-	
-	public ForexRateBookingReq(String baseCurrency, String counterCurrency, BigDecimal baseCurrencyAmount, Long customerId) {
-		super();
-		this.baseCurrency = baseCurrency;
-		this.counterCurrency = counterCurrency;
-		this.baseCurrencyAmount = baseCurrencyAmount;
-		this.customerId = customerId;
-	}
-	
-	public String getBaseCurrency() {
-		return baseCurrency;
-	}
 
-	public void setBaseCurrency(String baseCurrency) {
-		this.baseCurrency = baseCurrency;
-	}
 
-	public String getCounterCurrency() {
-		return counterCurrency;
-	}
-
-	public void setCounterCurrency(String counterCurrency) {
-		this.counterCurrency = counterCurrency;
-	}
-
-	public BigDecimal getBaseCurrencyAmount() {
-		return baseCurrencyAmount;
-	}
-
-	public void setBaseCurrencyAmount(BigDecimal baseCurrencyAmount) {
-		this.baseCurrencyAmount = baseCurrencyAmount;
-	}
-
-	public Long getCustomerId() {
-		return customerId;
-	}
-
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
-	}
 }

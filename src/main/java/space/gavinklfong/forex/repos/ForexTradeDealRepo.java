@@ -1,10 +1,9 @@
 package space.gavinklfong.forex.repos;
 
-import java.util.List;
-
 import org.springframework.data.repository.CrudRepository;
-
 import space.gavinklfong.forex.models.ForexTradeDeal;
+
+import java.util.List;
 
 public interface ForexTradeDealRepo extends CrudRepository<ForexTradeDeal, Long> {
 

@@ -1,8 +1,13 @@
 package space.gavinklfong.forex.bdd;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.cucumber.spring.CucumberContextConfiguration;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,15 +20,7 @@ import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
+import static org.junit.jupiter.api.Assertions.*;
 
 @CucumberContextConfiguration
 public class StepDef  {
@@ -78,27 +75,34 @@ public class StepDef  {
 		
 		jsonArray.forEach(item -> {
 			JSONObject json = (JSONObject) item;
-			assertTrue(json.getDouble("rate") > 0);
+			assertTrue(json.getDouble("buyRate") > 0);
+			assertTrue(json.getDouble("sellRate") > 0);
 			assertEquals(baseCurrency, json.getString("baseCurrency"));
-			if (json.getString("counterCurrency").contentEquals(baseCurrency)) {
-				assertEquals(1, json.getDouble("rate"));
-			}
+			assertNotEquals(baseCurrency, json.getString("counterCurrency"));
 		});
 	}
 	
-	@When("I request for a rate booking with parameters: {string}, {string}, {long}, {long}")
-	public void i_request_for_a_rate_booking_with_parameters(String base, String counter, Long amount, Long customerId) throws URISyntaxException, IOException, InterruptedException {
+	@When("I request for a rate booking with parameters: {string}, {string}, {string}, {long}, {long}")
+	public void i_request_for_a_rate_booking_with_parameters(String base, String counter, String tradeAction, Long amount, Long customerId) throws URISyntaxException, IOException, InterruptedException {
 		
 		this.baseCurrency = base;
 		this.counterCurrency = counter;
-			
-		String url = String.format(apiServiceUrl + "/rates/book?baseCurrency=%s&counterCurrency=%s&baseCurrencyAmount=%d&customerId=%d",
-				base, counter, amount, customerId);
-		
+
+		JSONObject rateBookingReq = new JSONObject();
+		rateBookingReq.put("baseCurrency", base);
+		rateBookingReq.put("counterCurrency", counter);
+		rateBookingReq.put("tradeAction", tradeAction);
+		rateBookingReq.put("baseCurrencyAmount", amount);
+		rateBookingReq.put("customerId", customerId);
+
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest
-				.newBuilder(new URI(url))
-				.header("accept", "application/json").build();	
+				.newBuilder(new URI(apiServiceUrl + "/rates/book"))
+				.POST(HttpRequest.BodyPublishers.ofString(rateBookingReq.toString()))
+				.header("accept", "application/json")
+				.header("Content-Type", "application/json")
+				.build();
+
 		this.response = client.send(request, HttpResponse.BodyHandlers.ofString());
 	}
 	
@@ -114,19 +118,20 @@ public class StepDef  {
 		assertTrue(json.getDouble("rate") > 0);
 		assertEquals(baseCurrency, json.getString("baseCurrency"));
 		assertEquals(counterCurrency, json.getString("counterCurrency"));
-				
+		assertNotNull(json.getString("bookingRef"));
 		LocalDateTime expiryTime = LocalDateTime.parse(json.getString("expiryTime"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		assertTrue(expiryTime.isAfter(LocalDateTime.now()));
 		
 		this.rateBooking = json;
 	}	
 	
-	@When("I submit a forex trade deal with rate booking and parameters: {string}, {string}, {long}, {long}")
-	public void i_submit_a_forex_trade_deal_with_rate_booking_and_parameters(String base, String counter, Long amount, Long customerId) throws URISyntaxException, IOException, InterruptedException {
+	@When("I submit a forex trade deal with rate booking and parameters: {string}, {string}, {string}, {long}, {long}")
+	public void i_submit_a_forex_trade_deal_with_rate_booking_and_parameters(String base, String counter, String tradeAction, Long amount, Long customerId) throws URISyntaxException, IOException, InterruptedException {
 		
 		JSONObject tradeDeal = new JSONObject();
 		tradeDeal.put("baseCurrency", base);
 		tradeDeal.put("counterCurrency", counter);
+		tradeDeal.put("tradeAction", tradeAction);
 		tradeDeal.put("baseCurrencyAmount", amount);
 		tradeDeal.put("customerId", customerId);
 		tradeDeal.put("rateBookingRef", rateBooking.getString("bookingRef"));
@@ -134,7 +139,7 @@ public class StepDef  {
 		
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest
-				.newBuilder(new URI(apiServiceUrl + "/deals/"))
+				.newBuilder(new URI(apiServiceUrl + "/deals"))
 				.POST(HttpRequest.BodyPublishers.ofString(tradeDeal.toString()))
 				.header("accept", "application/json")
 				.header("Content-Type", "application/json")
