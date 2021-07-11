@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This repository was created with the aim of demonstrating the prevailing non-blocking technology of Spring framework WebFlux and the reactive programming style.
+This repository is a clone of Reactive Spring Forex Trade [ https://github.com/gavinklfong/reactive-spring-forex-trade ]. This project converted the implementation to servlet. It is to demonstrate the blocking technology of Spring framework Servlet MVC.
 
 It is an API service which serves the use case of foreign currency trading. Here is list of API endpoints:
 
@@ -19,14 +19,18 @@ It is an API service which serves the use case of foreign currency trading. Here
 
 Maven pom.xml was generated on Spring Initializr with the following dependent libraries:
 
-- **Spring WebFlux** - Web Framework supports non-block operations
+- **Spring Web** - Web Framework of blocking operations
 - **Spring Data JPA** - Persistent data access
 - **Spring Validation** - Validation definition using annotations
 - **H2 Database** - In-memory database for testing
 
 ### External Service
 
-To retrieve the latest currency exchange rate, service consume external API [ https://api.exchangeratesapi.io]
+This application depends on external service for the retrieval of the latest currency exchange rate.
+
+The service is provided by a mock server, so you need firstly to install json server on your machine
+
+`npm install -g json-server`
 
 ## Build & Run
 	
@@ -35,12 +39,21 @@ This is Maven project, you can clone this repository to your local machine and t
 You can follow the commands below:
 
 **Build:**
+
+`json-server ./mock-server/mock-data.json`
+
 `mvn install`
 
 **Run:**
+
 `mvn spring-boot:run`
 
-	
+## Docker Image
+
+Alternatively, you can run this application using the published docker image.
+
+`docker run --rm -p 8080:8080 whalebig27/servlet-spring-forex-trade`
+
 ## Use Case
 
 
