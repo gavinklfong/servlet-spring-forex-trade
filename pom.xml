@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>space.gavinklfong</groupId>
-	<artifactId>forex</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>servlet-forex</name>
+	<artifactId>servlet-spring-forex-trade</artifactId>
+	<version>0.0.1</version>
+	<name>servlet-spring-forex-trade</name>
 	<description>Servlet Forex Trade</description>
 	<properties>
 		<java.version>11</java.version>
@@ -145,6 +145,27 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.13</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>whalebig27/${project.artifactId}</repository>
+					<tag>${project.version}</tag>
+					<buildArgs>
+						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
