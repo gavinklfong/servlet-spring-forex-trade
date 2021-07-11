@@ -13,7 +13,7 @@ pipeline {
     stage('Build') {
       steps {
         // Get code from a GitHub repository
-        git 'https://github.com/gavinklfong/reactive-spring-forex-trade.git'
+        git 'https://github.com/gavinklfong/servlet-spring-forex-trade.git'
 
         // Compile source code without running unit test
         sh "mvn clean compile -P compile"
