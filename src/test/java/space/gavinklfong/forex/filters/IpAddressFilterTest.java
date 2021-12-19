@@ -30,7 +30,7 @@ public class IpAddressFilterTest {
     }
 
     @Test
-    void givenRequestFromValidIpAddress_whenSubmitToFilter_thenPassOnFilterChain() throws ServletException, IOException {
+    void givenRequestFromValidIpAddress_whenSubmitToFilter_thenReject() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest(HttpMethod.GET.name(), "/test");
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain filterChain = (filterRequest, filterResponse) -> ((HttpServletResponse)filterResponse).setStatus(HttpStatus.OK.value());
@@ -54,7 +54,7 @@ public class IpAddressFilterTest {
     }
 
     @Test
-    void givenRequestFromInValidIpAddress_whenSubmitToFilter_thenPassOnFilterChain() throws ServletException, IOException {
+    void givenRequestFromUnauthorizedIpAddress_whenSubmitToFilter_thenReject() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest(HttpMethod.GET.name(), "/test");
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain filterChain = (filterRequest, filterResponse) -> ((HttpServletResponse)filterResponse).setStatus(HttpStatus.OK.value());
