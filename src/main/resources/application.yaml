@@ -5,7 +5,6 @@ app:
   forex-rate-api-url: http://localhost:3000
   allowed-ip-range: 192.168.0.0/16, 179.80.1.0/24, 127.0.0.1
 
-
 debug: false
 
 spring:
@@ -23,6 +22,3 @@ logging:
     org:
       springframework:
         r2dbc: INFO
-        web:
-          filter:
-            CommonsRequestLoggingFilter: DEBUG
