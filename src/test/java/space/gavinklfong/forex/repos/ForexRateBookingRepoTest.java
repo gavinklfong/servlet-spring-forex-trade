@@ -11,6 +11,8 @@ import org.springframework.test.context.jdbc.Sql;
 import space.gavinklfong.forex.models.Customer;
 import space.gavinklfong.forex.models.ForexRateBooking;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
@@ -39,9 +41,9 @@ public class ForexRateBookingRepoTest {
 		ForexRateBooking rate = new ForexRateBooking();
 		rate.setBaseCurrency("GBP");
 		rate.setCounterCurrency("USD");
-		rate.setTimestamp(LocalDateTime.now());
+		rate.setTimestamp(Instant.now());
 		rate.setRate(Double.valueOf(2.25));
-		rate.setExpiryTime(LocalDateTime.now().plusMinutes(10));
+		rate.setExpiryTime(Instant.now().plus(Duration.ofMinutes(10)));
 		rate.setBookingRef(uuid.toString());
 		rate.setCustomerId(1l);
 
@@ -62,9 +64,9 @@ public class ForexRateBookingRepoTest {
 		ForexRateBooking bookingOriginal = new ForexRateBooking();
 		bookingOriginal.setBaseCurrency("GBP");
 		bookingOriginal.setCounterCurrency("USD");
-		bookingOriginal.setTimestamp(LocalDateTime.now());
+		bookingOriginal.setTimestamp(Instant.now());
 		bookingOriginal.setRate(Double.valueOf(2.25));
-		bookingOriginal.setExpiryTime(LocalDateTime.now().plusMinutes(10));
+		bookingOriginal.setExpiryTime(Instant.now().plus(Duration.ofMinutes(10)));
 		bookingOriginal.setBookingRef(uuid.toString());
 		
 		bookingOriginal = rateBookingRepo.save(bookingOriginal);
@@ -92,8 +94,8 @@ public class ForexRateBookingRepoTest {
 		assertEquals(1, bookings.size());
 		
 		ForexRateBooking booking = bookings.get(0);
-		assertEquals("2021-02-01T11:50:00", booking.getTimestamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-		assertEquals("2021-02-01T12:10:00", booking.getExpiryTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+		assertEquals("2021-02-01T11:50:00Z", DateTimeFormatter.ISO_INSTANT.format(booking.getTimestamp()));
+		assertEquals("2021-02-01T12:10:00Z", DateTimeFormatter.ISO_INSTANT.format(booking.getExpiryTime()));
 		assertEquals("GBP", booking.getBaseCurrency());
 		assertEquals("USD", booking.getCounterCurrency());
 		assertEquals(1000d, booking.getBaseCurrencyAmount().doubleValue());	

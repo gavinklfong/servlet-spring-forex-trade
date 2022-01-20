@@ -22,6 +22,8 @@ import space.gavinklfong.forex.services.ForexPricingService;
 import space.gavinklfong.forex.services.ForexRateService;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
@@ -99,8 +101,8 @@ class ForexRateRestControllerTest {
         when(rateService.obtainBooking((any(ForexRateBookingReq.class))))
                 .thenAnswer(invocation -> {
                     ForexRateBookingReq req = (ForexRateBookingReq) invocation.getArgument(0);
-                    LocalDateTime timestamp = LocalDateTime.now();
-                    LocalDateTime expiryTime = timestamp.plusMinutes(10);
+                    Instant timestamp = Instant.now();
+                    Instant expiryTime = timestamp.plus(Duration.ofMinutes(10));
                     return ForexRateBooking.builder()
                             .timestamp(timestamp)
                             .baseCurrency(req.getBaseCurrency())
@@ -138,8 +140,8 @@ class ForexRateRestControllerTest {
         when(rateService.obtainBooking((any(ForexRateBookingReq.class))))
                 .thenAnswer(invocation -> {
                     ForexRateBookingReq req = (ForexRateBookingReq) invocation.getArgument(0);
-                    LocalDateTime timestamp = LocalDateTime.now();
-                    LocalDateTime expiryTime = timestamp.plusMinutes(10);
+                    Instant timestamp = Instant.now();
+                    Instant expiryTime = timestamp.plus(Duration.ofMinutes(10));
                     return ForexRateBooking.builder()
                             .timestamp(timestamp)
                             .baseCurrency(req.getBaseCurrency())

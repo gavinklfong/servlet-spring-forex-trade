@@ -20,6 +20,8 @@ import space.gavinklfong.forex.repos.CustomerRepo;
 import space.gavinklfong.forex.repos.ForexRateBookingRepo;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -60,7 +62,7 @@ public class ForexRateServiceTest {
 	void validateRateBookingTest_validBooking() {
 		
 		ForexRateBooking mockRecord = new ForexRateBooking("GBP", "USD", 0.25, BigDecimal.valueOf(1000), "ABC");
-		mockRecord.setExpiryTime(LocalDateTime.now().plusMinutes(15));
+		mockRecord.setExpiryTime(Instant.now().plus(Duration.ofMinutes(15)));
 		when(rateBookingRepo.findByBookingRef(anyString())).thenReturn(Arrays.asList(mockRecord));
 		
 		ForexRateBooking rateBooking = new ForexRateBooking("GBP", "USD", 0.25, BigDecimal.valueOf(1000), "ABC");
@@ -84,7 +86,7 @@ public class ForexRateServiceTest {
 	void validateRateBookingTest_invalidBooking_expired() {
 		
 		ForexRateBooking mockRecord = new ForexRateBooking("GBP", "USD", 0.25, BigDecimal.valueOf(1000), "ABC");
-		mockRecord.setExpiryTime(LocalDateTime.now().minusMinutes(15));
+		mockRecord.setExpiryTime(Instant.now().minus(Duration.ofMinutes(15)));
 		when(rateBookingRepo.findByBookingRef(anyString())).thenReturn(Arrays.asList(mockRecord));
 		
 		ForexRateBooking rateBooking = new ForexRateBooking("GBP", "USD", 0.25, BigDecimal.valueOf(1000), "ABC");
@@ -149,8 +151,8 @@ public class ForexRateServiceTest {
 		
 		ForexRateBooking rateBooking = obtainBookingTest(1);
 		assertNotNull(rateBooking);
-		LocalDateTime timestamp = rateBooking.getTimestamp();
-		LocalDateTime expiryTime = rateBooking.getExpiryTime();
+		Instant timestamp = rateBooking.getTimestamp();
+		Instant expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
 		assertEquals(3 + CustomerRateTier.TIER1.rate, rateBooking.getRate());
 		
@@ -161,8 +163,8 @@ public class ForexRateServiceTest {
 		
 		ForexRateBooking rateBooking = obtainBookingTest(2);
 		assertNotNull(rateBooking);
-		LocalDateTime timestamp = rateBooking.getTimestamp();
-		LocalDateTime expiryTime = rateBooking.getExpiryTime();
+		Instant timestamp = rateBooking.getTimestamp();
+		Instant expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
 		assertEquals(3 + CustomerRateTier.TIER2.rate, rateBooking.getRate());
 	}
@@ -172,8 +174,8 @@ public class ForexRateServiceTest {
 		
 		ForexRateBooking rateBooking = obtainBookingTest(3);
 		assertNotNull(rateBooking);
-		LocalDateTime timestamp = rateBooking.getTimestamp();
-		LocalDateTime expiryTime = rateBooking.getExpiryTime();
+		Instant timestamp = rateBooking.getTimestamp();
+		Instant expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
 		assertEquals(3 + CustomerRateTier.TIER3.rate, rateBooking.getRate());
 		
@@ -187,9 +189,9 @@ public class ForexRateServiceTest {
 		
 		// Assert result
 		assertNotNull(rateBooking);
-		
-		LocalDateTime timestamp = rateBooking.getTimestamp();
-		LocalDateTime expiryTime = rateBooking.getExpiryTime();
+
+		Instant timestamp = rateBooking.getTimestamp();
+		Instant expiryTime = rateBooking.getExpiryTime();
 		assertTrue(timestamp.isBefore(expiryTime));
 		
 		assertEquals(3 + CustomerRateTier.TIER4.rate, rateBooking.getRate());

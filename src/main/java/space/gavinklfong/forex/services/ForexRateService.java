@@ -19,6 +19,7 @@ import space.gavinklfong.forex.models.ForexRateBooking.ForexRateBookingBuilder;
 import space.gavinklfong.forex.repos.CustomerRepo;
 import space.gavinklfong.forex.repos.ForexRateBookingRepo;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -191,7 +192,7 @@ public class ForexRateService {
 
         // Check if booking reference is expired
         ForexRateBooking record = repoRecords.get(0);
-        if (record.getExpiryTime().isBefore(LocalDateTime.now())) {
+        if (record.getExpiryTime().isBefore(Instant.now())) {
             return false;
         }
 
@@ -211,8 +212,8 @@ public class ForexRateService {
 
     private ForexRateBooking buildRateBookingRecord(ForexRateBookingReq request, ForexRate rate) {
 
-        LocalDateTime timestamp = LocalDateTime.now();
-        LocalDateTime expiryTime = timestamp.plusSeconds(bookingDuration);
+        Instant timestamp = Instant.now();
+        Instant expiryTime = timestamp.plusSeconds(bookingDuration);
 
         ForexRateBookingBuilder builder = ForexRateBooking.builder()
                 .baseCurrency(request.getBaseCurrency())
@@ -221,7 +222,7 @@ public class ForexRateService {
                 .customerId(request.getCustomerId())
                 .tradeAction(request.getTradeAction())
                 .bookingRef(UUID.randomUUID().toString())
-                .timestamp(LocalDateTime.now())
+                .timestamp(Instant.now())
                 .expiryTime(timestamp.plusSeconds(bookingDuration));
 
         if (request.getTradeAction() == TradeAction.SELL)
