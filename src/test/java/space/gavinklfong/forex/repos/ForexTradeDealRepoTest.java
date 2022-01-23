@@ -62,21 +62,21 @@ public class ForexTradeDealRepoTest {
 		
 		switch (record.getDealRef()) {
 			case "DEAL-REF-01":
-				assertEquals("2021-02-01T12:00:00", record.getTimestamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+				assertEquals("2021-02-01T12:00:00Z", DateTimeFormatter.ISO_INSTANT.format(record.getTimestamp()));
 				assertEquals("GBP", record.getBaseCurrency());
 				assertEquals("USD", record.getCounterCurrency());
 				assertEquals(1.3690754045, record.getRate());
 				assertEquals(1000d, record.getBaseCurrencyAmount().doubleValue());	
 			break;
 			case "DEAL-REF-02":
-				assertEquals("2021-02-02T12:00:00", record.getTimestamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+				assertEquals("2021-02-02T12:00:00Z", DateTimeFormatter.ISO_INSTANT.format(record.getTimestamp()));
 				assertEquals("EUR", record.getBaseCurrency());
 				assertEquals("CAD", record.getCounterCurrency());
 				assertEquals(1.5331, record.getRate());
 				assertEquals(2000d, record.getBaseCurrencyAmount().doubleValue());					
 			break;
 			case "DEAL-REF-03":
-				assertEquals("2021-02-03T12:00:00", record.getTimestamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+				assertEquals("2021-02-03T12:00:00Z", DateTimeFormatter.ISO_INSTANT.format(record.getTimestamp()));
 				assertEquals("USD", record.getBaseCurrency());
 				assertEquals("EUR", record.getCounterCurrency());
 				assertEquals(0.8250144378, record.getRate());

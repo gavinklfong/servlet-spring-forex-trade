@@ -8,6 +8,7 @@ import space.gavinklfong.forex.dto.TradeAction;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,7 +26,7 @@ public class ForexTradeDeal {
 	@Column(unique = true)
 	private String dealRef;
 	
-	private LocalDateTime timestamp;
+	private Instant timestamp;
 		
 	private String baseCurrency;
 	

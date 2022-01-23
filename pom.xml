@@ -147,7 +147,14 @@
 		    <version>5.11.2</version>
 		    <scope>test</scope>
 		</dependency>
-	    
+
+		<dependency>
+			<groupId>au.com.dius.pact.provider</groupId>
+			<artifactId>junit5spring</artifactId>
+			<version>4.3.4</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -241,6 +248,9 @@
 			    	</excludes>
 			    	<groups>${test.groups}</groups>
 			    	<skip>${maven.surefire.skip}</skip>
+					<systemPropertyVariables>
+						<pact.verifier.publishResults>true</pact.verifier.publishResults>
+					</systemPropertyVariables>
 			    </configuration>
 			</plugin>
             <plugin>

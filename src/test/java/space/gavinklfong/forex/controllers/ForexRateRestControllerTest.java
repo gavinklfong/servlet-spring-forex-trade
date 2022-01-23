@@ -20,6 +20,7 @@ import space.gavinklfong.forex.exceptions.UnknownCustomerException;
 import space.gavinklfong.forex.models.ForexRateBooking;
 import space.gavinklfong.forex.services.ForexPricingService;
 import space.gavinklfong.forex.services.ForexRateService;
+import space.gavinklfong.forex.setup.StubSetup;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -59,17 +60,7 @@ class ForexRateRestControllerTest {
     void getLatestRates() throws Exception {
 
         // Mock return data of rate service
-        when(rateService.fetchLatestRates(anyString()))
-                .thenAnswer(invocation -> {
-                    String baseCurrency = (String) invocation.getArgument(0);
-                    LocalDateTime timestamp = LocalDateTime.now();
-                    return Arrays.asList(
-                            ForexRate.builder().timestamp(timestamp).baseCurrency(baseCurrency).counterCurrency("USD").buyRate(Math.random()).sellRate(Math.random()).build(),
-                            ForexRate.builder().timestamp(timestamp).baseCurrency(baseCurrency).counterCurrency("EUR").buyRate(Math.random()).sellRate(Math.random()).build(),
-                            ForexRate.builder().timestamp(timestamp).baseCurrency(baseCurrency).counterCurrency("CAD").buyRate(Math.random()).sellRate(Math.random()).build(),
-                            ForexRate.builder().timestamp(timestamp).baseCurrency(baseCurrency).counterCurrency("JPY").buyRate(Math.random()).sellRate(Math.random()).build()
-                    );
-                });
+        StubSetup.stubForGetForexRates(rateService);
 
         // trigger API request to rate controller
         webTestClient.get()
@@ -98,21 +89,7 @@ class ForexRateRestControllerTest {
     @Test
     void bookRate() throws UnknownCustomerException {
 
-        when(rateService.obtainBooking((any(ForexRateBookingReq.class))))
-                .thenAnswer(invocation -> {
-                    ForexRateBookingReq req = (ForexRateBookingReq) invocation.getArgument(0);
-                    Instant timestamp = Instant.now();
-                    Instant expiryTime = timestamp.plus(Duration.ofMinutes(10));
-                    return ForexRateBooking.builder()
-                            .timestamp(timestamp)
-                            .baseCurrency(req.getBaseCurrency())
-                            .counterCurrency(req.getCounterCurrency())
-                            .rate(Math.random())
-                            .bookingRef(UUID.randomUUID().toString())
-                            .expiryTime(expiryTime)
-                            .customerId(req.getCustomerId())
-                            .build();
-                });
+        StubSetup.stubForBookRate(rateService);
 
         ForexRateBookingReq req = ForexRateBookingReq.builder()
                 .customerId(1l)
@@ -137,21 +114,7 @@ class ForexRateRestControllerTest {
     // TODO: disabled this test at the moment before the response content type issue is fixed
     public void bookRate_missingParam() throws UnknownCustomerException {
 
-        when(rateService.obtainBooking((any(ForexRateBookingReq.class))))
-                .thenAnswer(invocation -> {
-                    ForexRateBookingReq req = (ForexRateBookingReq) invocation.getArgument(0);
-                    Instant timestamp = Instant.now();
-                    Instant expiryTime = timestamp.plus(Duration.ofMinutes(10));
-                    return ForexRateBooking.builder()
-                            .timestamp(timestamp)
-                            .baseCurrency(req.getBaseCurrency())
-                            .counterCurrency(req.getCounterCurrency())
-                            .rate(Math.random())
-                            .bookingRef(UUID.randomUUID().toString())
-                            .expiryTime(expiryTime)
-                            .customerId(req.getCustomerId())
-                            .build();
-                });
+        StubSetup.stubForBookRate(rateService);
 
         ForexRateBookingReq req = ForexRateBookingReq.builder()
                 .customerId(1l)

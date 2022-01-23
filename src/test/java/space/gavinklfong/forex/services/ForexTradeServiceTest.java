@@ -17,6 +17,7 @@ import space.gavinklfong.forex.repos.CustomerRepo;
 import space.gavinklfong.forex.repos.ForexTradeDealRepo;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +139,7 @@ public class ForexTradeServiceTest {
 
 		ForexTradeDeal deal1 = ForexTradeDeal.builder()
 				.id(1l).dealRef(UUID.randomUUID().toString())
-				.timestamp(LocalDateTime.now())
+				.timestamp(Instant.now())
 				.baseCurrency("GBP").counterCurrency("USD")
 				.rate(1.25d).baseCurrencyAmount(new BigDecimal(1000)).customerId(1l)
 				.tradeAction(TradeAction.BUY)
@@ -146,7 +147,7 @@ public class ForexTradeServiceTest {
 
 		ForexTradeDeal deal2 = ForexTradeDeal.builder()
 				.id(1l).dealRef(UUID.randomUUID().toString())
-				.timestamp(LocalDateTime.now())
+				.timestamp(Instant.now())
 				.baseCurrency("GBP").counterCurrency("USD")
 				.rate(1.25d).baseCurrencyAmount(new BigDecimal(1000)).customerId(1l)
 				.tradeAction(TradeAction.SELL)
@@ -154,7 +155,7 @@ public class ForexTradeServiceTest {
 
 		ForexTradeDeal deal3 = ForexTradeDeal.builder()
 				.id(1l).dealRef(UUID.randomUUID().toString())
-				.timestamp(LocalDateTime.now())
+				.timestamp(Instant.now())
 				.baseCurrency("GBP").counterCurrency("USD")
 				.rate(Math.random()).baseCurrencyAmount(new BigDecimal(1000)).customerId(1l)
 				.tradeAction(TradeAction.SELL)

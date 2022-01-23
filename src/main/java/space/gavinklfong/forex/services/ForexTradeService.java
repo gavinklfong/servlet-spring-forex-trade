@@ -11,6 +11,7 @@ import space.gavinklfong.forex.models.ForexTradeDeal;
 import space.gavinklfong.forex.repos.CustomerRepo;
 import space.gavinklfong.forex.repos.ForexTradeDealRepo;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,7 @@ public class ForexTradeService {
 			return tradeDealRepo.save(
 					ForexTradeDeal.builder()
 							.dealRef(UUID.randomUUID().toString())
-							.timestamp(LocalDateTime.now())
+							.timestamp(Instant.now())
 							.baseCurrency(req.getBaseCurrency())
 							.counterCurrency(req.getCounterCurrency())
 							.rate(req.getRate())

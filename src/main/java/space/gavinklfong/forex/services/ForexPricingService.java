@@ -9,6 +9,7 @@ import space.gavinklfong.forex.dto.ForexRate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,7 @@ public class ForexPricingService {
 
 		ForexPricing pricing = findAdditionalPip(baseCurrency, counterCurrency);
 
-		return new ForexRate(LocalDateTime.now(), baseCurrency, counterCurrency,
+		return new ForexRate(Instant.now(), baseCurrency, counterCurrency,
 				roundDecimal(rate + pricing.getBuyPip() / (double)10000, 4),
 				roundDecimal(rate + pricing.getSellPip() / (double)10000, 4));
 	}

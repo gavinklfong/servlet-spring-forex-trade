@@ -17,8 +17,10 @@ import space.gavinklfong.forex.dto.TradeAction;
 import space.gavinklfong.forex.exceptions.ErrorBody;
 import space.gavinklfong.forex.models.ForexTradeDeal;
 import space.gavinklfong.forex.services.ForexTradeService;
+import space.gavinklfong.forex.setup.StubSetup;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
@@ -46,18 +48,7 @@ public class ForexTradeDealRestControllerTest {
 	@Test
 	public void submitDeal() throws Exception {
 
-		when(tradeService.postTradeDeal(any(ForexTradeDealReq.class)))
-		.thenAnswer(invocation -> {
-			ForexTradeDealReq req = (ForexTradeDealReq)invocation.getArgument(0);
-			LocalDateTime timestamp = LocalDateTime.now();
-			return 	ForexTradeDeal.builder()
-					.id(1l).dealRef(UUID.randomUUID().toString())
-					.timestamp(LocalDateTime.now())
-					.baseCurrency(req.getBaseCurrency()).counterCurrency(req.getCounterCurrency())
-					.rate(req.getRate()).baseCurrencyAmount(req.getBaseCurrencyAmount()).customerId(req.getCustomerId())
-					.tradeAction(req.getTradeAction())
-					.build();
-		});
+		StubSetup.stubForSubmitDeal(tradeService);
 
 		ForexTradeDealReq req = ForexTradeDealReq.builder()
 				.tradeAction(TradeAction.BUY)
@@ -84,18 +75,7 @@ public class ForexTradeDealRestControllerTest {
 //	@Test
 	public void submitDeal_invalidReq() throws Exception {
 
-		when(tradeService.postTradeDeal(any(ForexTradeDealReq.class)))
-		.thenAnswer(invocation -> {
-			ForexTradeDealReq req = (ForexTradeDealReq)invocation.getArgument(0);
-			LocalDateTime timestamp = LocalDateTime.now();
-			return 	ForexTradeDeal.builder()
-					.id(1l).dealRef(UUID.randomUUID().toString())
-					.timestamp(LocalDateTime.now())
-					.baseCurrency(req.getBaseCurrency()).counterCurrency(req.getCounterCurrency())
-					.rate(req.getRate()).baseCurrencyAmount(req.getBaseCurrencyAmount()).customerId(req.getCustomerId())
-					.tradeAction(req.getTradeAction())
-					.build();
-		});
+		StubSetup.stubForSubmitDeal(tradeService);
 			
 		ForexTradeDealReq req = new ForexTradeDealReq();
 		
@@ -116,7 +96,7 @@ public class ForexTradeDealRestControllerTest {
 		ForexTradeDeal deal1 =
 				ForexTradeDeal.builder()
 						.id(1l).dealRef(UUID.randomUUID().toString())
-						.timestamp(LocalDateTime.now())
+						.timestamp(Instant.now())
 						.baseCurrency("GBP").counterCurrency("USD")
 						.rate(Math.random()).baseCurrencyAmount(BigDecimal.valueOf(1000)).customerId(1l)
 						.tradeAction(TradeAction.BUY)
@@ -125,7 +105,7 @@ public class ForexTradeDealRestControllerTest {
 		ForexTradeDeal deal2 =
 				ForexTradeDeal.builder()
 						.id(1l).dealRef(UUID.randomUUID().toString())
-						.timestamp(LocalDateTime.now())
+						.timestamp(Instant.now())
 						.baseCurrency("GBP").counterCurrency("USD")
 						.rate(Math.random()).baseCurrencyAmount(BigDecimal.valueOf(1000)).customerId(1l)
 						.tradeAction(TradeAction.BUY)
@@ -134,7 +114,7 @@ public class ForexTradeDealRestControllerTest {
 		ForexTradeDeal deal3 =
 				ForexTradeDeal.builder()
 						.id(1l).dealRef(UUID.randomUUID().toString())
-						.timestamp(LocalDateTime.now())
+						.timestamp(Instant.now())
 						.baseCurrency("GBP").counterCurrency("USD")
 						.rate(Math.random()).baseCurrencyAmount(BigDecimal.valueOf(1000)).customerId(1l)
 						.tradeAction(TradeAction.BUY)
