@@ -6,6 +6,7 @@ import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker;
 import au.com.dius.pact.provider.junitsupport.loader.PactBrokerAuth;
+import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
 import au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget;
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,13 +32,11 @@ import java.util.Arrays;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = {ForexRateRestController.class, ForexTradeDealRestController.class})
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("pact")
 @Provider("ForexTradeProvider")
-//@PactBroker(scheme="http", host = "localhost", port = "9292")
-@PactBroker
+//@PactBroker
+@PactFolder("pacts")
 public class ForexRestApiPactVerificatonTest {
 
     @MockBean
@@ -60,7 +59,6 @@ public class ForexRestApiPactVerificatonTest {
 
     @BeforeEach
     void beforeEach(PactVerificationContext context) {
-//        context.setTarget(new HttpTestTarget("localhost", serverPort));
         context.setTarget(new MockMvcTestTarget(mockMvc));
     }
 

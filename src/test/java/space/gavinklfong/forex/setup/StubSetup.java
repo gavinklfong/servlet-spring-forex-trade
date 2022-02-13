@@ -59,7 +59,7 @@ public class StubSetup {
                     Instant timestamp = Instant.now();
                     Instant expiryTime = timestamp.plus(Duration.ofMinutes(10));
                     return ForexRateBooking.builder()
-                            .id((long)Math.random())
+                            .id((long)(Math.random() * 100))
                             .timestamp(timestamp)
                             .baseCurrency(req.getBaseCurrency())
                             .counterCurrency(req.getCounterCurrency())
