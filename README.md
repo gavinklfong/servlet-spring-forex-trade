@@ -142,9 +142,12 @@ Unit test code is built for each components. To isolate the target component, al
 
 ![Unit Test for Repository](https://raw.githubusercontent.com/gavinklfong/reactive-spring-forex-trade/master/blob/Testing-Unit_Test-Repository.jpg?raw=true)
 
-
 ### Integration Test
 
 Next, end-to-end test is executed as if a real application. Thus, spring context is fully loaded using @SpringBootTest annotation
 
 WebTestClient is used as API client which triggers HTTP requests to API endpoints and verify the actual result.
+
+### Contract Test
+ 
+This sample demonstrates the contract test on the provider side. The test reads contract definition from resource folder "pacts" and verify whether the forex APIs conforms to the contract.

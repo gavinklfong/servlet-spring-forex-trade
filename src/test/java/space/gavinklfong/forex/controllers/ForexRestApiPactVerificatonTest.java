@@ -35,7 +35,6 @@ import static org.mockito.Mockito.when;
 @WebMvcTest(controllers = {ForexRateRestController.class, ForexTradeDealRestController.class})
 @ActiveProfiles("pact")
 @Provider("ForexTradeProvider")
-//@PactBroker
 @PactFolder("pacts")
 public class ForexRestApiPactVerificatonTest {
 

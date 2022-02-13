@@ -1,0 +1,634 @@
+{
+  "consumer": {
+    "name": "InvestmentClient"
+  },
+  "interactions": [
+    {
+      "description": "Rate Booking Request",
+      "providerStates": [
+        {
+          "name": "Book Forex Rate"
+        }
+      ],
+      "request": {
+        "body": {
+          "baseCurrency": "GBP",
+          "baseCurrencyAmount": 1500.25,
+          "counterCurrency": "USD",
+          "customerId": 1,
+          "tradeAction": "BUY"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-API-KEY": "nhS67c"
+        },
+        "matchingRules": {
+          "body": {
+            "$.baseCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.baseCurrencyAmount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.counterCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.customerId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.tradeAction": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "X-API-KEY": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[A-Za-z0-9-]+"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/rates/book"
+      },
+      "response": {
+        "body": {
+          "baseCurrency": "GBP",
+          "baseCurrencyAmount": 1500.25,
+          "bookingRef": "debcd3bf-11ba-4d2a-bbc7-dcbd8c6c6669",
+          "counterCurrency": "USD",
+          "customerId": 1,
+          "id": 100,
+          "rate": 1.25,
+          "timestamp": "2022-02-11T23:38:27.120226Z",
+          "tradeAction": "BUY"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$.baseCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.baseCurrencyAmount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.bookingRef": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                }
+              ]
+            },
+            "$.counterCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.customerId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.timestamp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "timestamp",
+                  "timestamp": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+                },
+                {
+                  "match": "timestamp",
+                  "timestamp": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+                }
+              ]
+            },
+            "$.tradeAction": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json(;\\s?charset=[\\w\\-]+)?"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Latest Rate Request",
+      "providerStates": [
+        {
+          "name": "Get Forex Rate"
+        }
+      ],
+      "request": {
+        "headers": {
+          "X-API-KEY": "-2N8L"
+        },
+        "matchingRules": {
+          "header": {
+            "X-API-KEY": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[A-Za-z0-9-]+"
+                }
+              ]
+            }
+          },
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "regex",
+                "regex": "/rates/latest/([A-Z]){3}/([A-Z]){3}"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/rates/latest/LAZ/UGO"
+      },
+      "response": {
+        "body": {
+          "baseCurrency": "GBP",
+          "buyRate": 1.25,
+          "counterCurrency": "USD",
+          "sellRate": 1.5,
+          "timestamp": "2022-02-11T23:28:26.965626Z"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$.baseCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.buyRate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.counterCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.sellRate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.timestamp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "timestamp",
+                  "timestamp": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json(;\\s?charset=[\\w\\-]+)?"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Latest Rates Request",
+      "providerStates": [
+        {
+          "name": "Get Forex Rates"
+        }
+      ],
+      "request": {
+        "headers": {
+          "X-API-KEY": "s"
+        },
+        "matchingRules": {
+          "header": {
+            "X-API-KEY": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[A-Za-z0-9-]+"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/rates/latest"
+      },
+      "response": {
+        "body": [
+          {
+            "baseCurrency": "GBP",
+            "buyRate": 1.25,
+            "counterCurrency": "USD",
+            "sellRate": 1.5,
+            "timestamp": "2022-02-11T23:28:19.801132Z"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].baseCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$[*].buyRate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$[*].counterCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$[*].sellRate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$[*].timestamp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "timestamp",
+                  "timestamp": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json(;\\s?charset=[\\w\\-]+)?"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Trade Deal Request",
+      "providerStates": [
+        {
+          "name": "Submit Forex Trade Deal"
+        }
+      ],
+      "request": {
+        "body": {
+          "baseCurrency": "GBP",
+          "baseCurrencyAmount": 1500.25,
+          "counterCurrency": "USD",
+          "customerId": 1,
+          "rate": 1.25,
+          "rateBookingRef": "630979f7-f61d-45d0-a422-a94b271fae51",
+          "tradeAction": "BUY"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-API-KEY": "r"
+        },
+        "matchingRules": {
+          "body": {
+            "$.baseCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.baseCurrencyAmount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.counterCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.customerId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.rateBookingRef": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                }
+              ]
+            },
+            "$.tradeAction": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "X-API-KEY": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[A-Za-z0-9-]+"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/deals"
+      },
+      "response": {
+        "body": {
+          "baseCurrency": "GBP",
+          "baseCurrencyAmount": 1500.25,
+          "counterCurrency": "USD",
+          "customerId": 1,
+          "dealRef": "71367db4-24d5-40de-a0ac-a9f1f07524d3",
+          "id": 100,
+          "rate": 1.25,
+          "timestamp": "2022-02-11T23:28:26.069991Z",
+          "tradeAction": "BUY"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=UTF-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$.baseCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.baseCurrencyAmount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.counterCurrency": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "([A-Z]){3}"
+                }
+              ]
+            },
+            "$.customerId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.dealRef": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.timestamp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "timestamp",
+                  "timestamp": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+                }
+              ]
+            },
+            "$.tradeAction": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json(;\\s?charset=[\\w\\-]+)?"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.3.4"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "ForexTradeProvider"
+  }
+}

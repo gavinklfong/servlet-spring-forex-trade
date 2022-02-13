@@ -18,8 +18,3 @@ spring:
     show-sql: true
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
-        
-pactbroker:
-  host: localhost
-  scheme: http
-  port: 9292
